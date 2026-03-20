@@ -1,6 +1,7 @@
 {
   "name": "app",
   "version": "0.1.0",
+  "homepage": "https://s-k-sriraam.github.io/social-media-/",
   "proxy": "http://localhost:5000",
   "private": true,
   "dependencies": {
