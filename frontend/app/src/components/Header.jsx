@@ -93,7 +93,7 @@ function Header() {
       >
         <div className="container-fluid">
           <Link className="navbar-brand" to="/">
-            Social Media App
+            IG
           </Link>
           <button
             className="navbar-toggler"

@@ -123,7 +123,7 @@ function Profile() {
         data?.otpauth_url || data?.otpauthUrl || data?.secret;
       const otpauthUrl = secretOrOtpUrl?.startsWith("otpauth://")
         ? secretOrOtpUrl
-        : `otpauth://totp/SocialMediaApp:${encodeURIComponent(user.email || user.username || "User")}?secret=${secretOrOtpUrl}&issuer=SocialMediaApp`;
+        : `otpauth://totp/IG:${encodeURIComponent(user.email || user.username || "User")}?secret=${secretOrOtpUrl}&issuer=IG`;
 
       await generateQrCodeUrl(otpauthUrl);
       setUser((prev) => ({ ...prev, twoFactorAuth: true }));
