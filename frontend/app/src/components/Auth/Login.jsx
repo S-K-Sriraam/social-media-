@@ -4,6 +4,7 @@ import { Link, useNavigate, useLocation }from "react-router-dom";
 import axios from "axios";
 import Loader from "../Loader";
 import Message from "../Message";
+import { getUserInfo, setUserInfo } from "../../utils/userSession";
 
 function Login() {
   const navigate = useNavigate();
@@ -121,7 +122,7 @@ function Login() {
       }
 
       const {data} = await axios.post("/api/auth/login", payload, config);
-      localStorage.setItem("userInfo",JSON.stringify(data));
+      setUserInfo(data);
       clearForm();
       navigate("/profile");
     } catch (error) {
@@ -136,7 +137,7 @@ function Login() {
   }
 
   useEffect (() => {
-    const userInfo = localStorage.getItem("userInfo");
+    const userInfo = getUserInfo();
     if(userInfo) {
       navigate("/profile")
     }

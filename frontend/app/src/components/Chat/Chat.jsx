@@ -5,6 +5,7 @@ import io from "socket.io-client";
 import axios from "axios";
 import Loader from "../Loader";
 import Message from "../Message";
+import { getUserInfo } from "../../utils/userSession";
 const ENDPOINT = "http://localhost:5000";
 let socket;
 
@@ -14,7 +15,7 @@ function Chat() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [messageContent, setMessageContent] = useState("");
-  const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
+  const userInfo = getUserInfo() || {};
   const currentUserId = userInfo?._id;
 
   useEffect(() => {
@@ -25,9 +26,22 @@ function Chat() {
     socket = io(ENDPOINT);
     socket.emit("joinChat", chatId);
 
+    socket.on("connect", () => {
+      socket.emit("joinChat", chatId);
+    });
+
     socket.on("receiveMessage", (message) => {
       console.log("message received", message);
-      setMessages((prevMessages) => [...prevMessages, message]);
+      setMessages((prevMessages) => {
+        const alreadyExists = prevMessages.some(
+          (msg) => String(msg._id) === String(message._id),
+        );
+        if (alreadyExists) {
+          return prevMessages;
+        }
+
+        return [...prevMessages, message];
+      });
     });
 
     return () => {
@@ -43,7 +57,7 @@ function Chat() {
     }
 
     try {
-      const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+      const userInfo = getUserInfo();
       const config = {
         headers: {
           "Content-Type": "application/json",
@@ -58,12 +72,6 @@ function Chat() {
       );
 
       setMessages(data?.messages || []);
-      socket.emit("sendMessage", {
-        chatId,
-        content: messageContent.trim(),
-        sender: userInfo?._id,
-        timestamp: new Date().toISOString(),
-      });
       setMessageContent("");
       setError(null);
     } catch (err) {
@@ -75,14 +83,18 @@ function Chat() {
     }
   };
 
-  const fetchMessages = async () => {
+  const fetchMessages = async (silent = false) => {
     try {
-      setLoading(true);
-      const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+      if (!silent) {
+        setLoading(true);
+      }
+      const userInfo = getUserInfo();
 
       if (!userInfo?.token) {
         setError("Please login to continue");
-        setLoading(false);
+        if (!silent) {
+          setLoading(false);
+        }
         return;
       }
 
@@ -102,7 +114,9 @@ function Chat() {
           : error.message,
       );
     } finally {
-      setLoading(false);
+      if (!silent) {
+        setLoading(false);
+      }
     }
   };
 
@@ -111,6 +125,12 @@ function Chat() {
       return;
     }
     fetchMessages();
+
+    const intervalId = setInterval(() => {
+      fetchMessages(true);
+    }, 2000);
+
+    return () => clearInterval(intervalId);
   }, [chatId]);
 
   return (
@@ -172,3 +192,4 @@ function Chat() {
 }
 
 export default Chat;
+

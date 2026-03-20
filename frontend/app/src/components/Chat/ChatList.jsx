@@ -4,6 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Message from "../Message";
 import Loader from "../Loader";
+import { getUserInfo } from "../../utils/userSession";
 
 function ChatList() {
   const [chatItems, setChatItems] = useState([]);
@@ -12,7 +13,7 @@ function ChatList() {
   const navigate = useNavigate();
 
   const getAuthConfig = () => {
-    const userinfo = JSON.parse(localStorage.getItem("userInfo"));
+    const userinfo = getUserInfo();
     if (!userinfo?.token) {
       throw new Error("Please login to view chats");
     }

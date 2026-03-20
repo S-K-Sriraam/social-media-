@@ -6,6 +6,7 @@ import Message from "../components/Message";
 import PostForm from "../components/Posts/PostForm";
 import PostList from "../components/Posts/PostList";
 import { useNavigate, Link } from "react-router-dom";
+import { getUserInfo } from "../utils/userSession";
 
 function Home() {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ function Home() {
   const startChatHandler = async (userId) => {
     try {
       setLoading(true);
-      const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+      const userInfo = getUserInfo();
       const config = {
         headers: {
           "Content-Type": "application/json",
@@ -42,7 +43,7 @@ function Home() {
   const fetchChats = async () => {
     try {
       setLoading(true);
-      const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+      const userInfo = getUserInfo();
       const config = {
         headers: {
           "Content-Type": "application/json",
@@ -66,7 +67,7 @@ function Home() {
   const fetchPosts = async () => {
     try {
       setLoading(true);
-      const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+      const userInfo = getUserInfo();
       const config = {
         headers: {
           Authorization: `Bearer ${userInfo.token}`,
@@ -86,7 +87,7 @@ function Home() {
   };
 
   useEffect(() => {
-    const userInfo = localStorage.getItem("userInfo");
+    const userInfo = getUserInfo();
 
     if (!userInfo) {
       navigate("/login");

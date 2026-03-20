@@ -3,6 +3,7 @@ import { Form, Button } from "react-bootstrap";
 import axios from "axios";
 import Loader from "../Loader";
 import Message from "../Message";
+import { getUserInfo } from "../../utils/userSession";
 
 function PostForm({fetchPosts}) {
   const [loading, setLoading] = useState(false);
@@ -21,7 +22,7 @@ function PostForm({fetchPosts}) {
     }
     try {
       setLoading(true);
-      const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+      const userInfo = getUserInfo();
       const config = {
         headers: {
           "Content-Type": "multipart/form-data",

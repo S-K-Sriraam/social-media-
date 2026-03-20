@@ -1,0 +1,5 @@
+backend/node_modules/
+backend/uploads/
+frontend/app/node_modules/
+frontend/app/build/
+*.log

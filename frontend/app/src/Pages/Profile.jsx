@@ -14,6 +14,7 @@ import QRCode from "qrcode";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import UserPosts from "../components/Posts/UserPosts";
+import { getUserInfo, clearUserInfo } from "../utils/userSession";
 
 function Profile() {
   const navigate = useNavigate();
@@ -37,14 +38,14 @@ function Profile() {
     const fetchUserProfile = async () => {
       try {
         setLoading(true);
-        const userInfo = localStorage.getItem("userInfo");
+        const userInfo = getUserInfo();
 
         if (!userInfo) {
           navigate("/login");
           return;
         }
 
-        const parsedUser = JSON.parse(userInfo);
+        const parsedUser = userInfo;
         const config = {
           headers: {
             "Content-Type": "application/json",
@@ -64,7 +65,7 @@ function Profile() {
         );
 
         if (err.response && err.response.status === 401) {
-          localStorage.removeItem("userInfo");
+          clearUserInfo();
           navigate("/login");
         }
       } finally {
@@ -103,13 +104,13 @@ function Profile() {
       setError(null);
       setMessage("");
 
-      const userInfo = localStorage.getItem("userInfo");
+      const userInfo = getUserInfo();
       if (!userInfo) {
         navigate("/login");
         return;
       }
 
-      const parsedUser = JSON.parse(userInfo);
+      const parsedUser = userInfo;
       const config = {
         headers: {
           "Content-Type": "application/json",
@@ -144,12 +145,12 @@ function Profile() {
       setLoading(true);
       setError(null);
 
-      const userInfo = localStorage.getItem("userInfo");
+      const userInfo = getUserInfo();
       if (!userInfo) {
         navigate("/login");
         return;
       }
-      const parsedUser = JSON.parse(userInfo);
+      const parsedUser = userInfo;
       const config = {
         headers: {
           "Content-Type": "application/json",
@@ -184,12 +185,12 @@ function Profile() {
         return;
       }
 
-      const userInfo = localStorage.getItem("userInfo");
+      const userInfo = getUserInfo();
       if (!userInfo) {
         navigate("/login");
         return;
       }
-      const parsedUser = JSON.parse(userInfo);
+      const parsedUser = userInfo;
       const config = {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -221,8 +222,8 @@ function Profile() {
     try {
       setLoading(true);
 
-      const userInfo = localStorage.getItem("userInfo");
-      const parsedUser = JSON.parse(userInfo);
+      const userInfo = getUserInfo();
+      const parsedUser = userInfo;
 
       const config = {
         headers: {
@@ -252,8 +253,8 @@ function Profile() {
     try {
       setLoading(true);
 
-      const userInfo = localStorage.getItem("userInfo");
-      const parsedUser = JSON.parse(userInfo);
+      const userInfo = getUserInfo();
+      const parsedUser = userInfo;
 
       const config = {
         headers: {
@@ -409,7 +410,11 @@ function Profile() {
             </Form>
 
             {loading && <Loader />}
-            {error && <Message variant="danger">{error}</Message>}
+            {error && (
+              <Message variant="danger" onClose={() => setError(null)}>
+                {error}
+              </Message>
+            )}
             <ListGroup className="mt-4">
               {results.map((result, index) => (
                 <ListGroup.Item
@@ -560,3 +565,4 @@ function Profile() {
 }
 
 export default Profile;
+

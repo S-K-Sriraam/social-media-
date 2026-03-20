@@ -44,7 +44,21 @@ const sendMessage = asyncHandler(async (req, res) => {
 
     chat.messages.push(message);
     await chat.save();
-    res.json(chat);
+
+    const updatedChat = await Chat.findById(chatId)
+      .populate("users", "-password")
+      .populate("messages.sender", "-password");
+
+    const latestMessage = updatedChat.messages[updatedChat.messages.length - 1];
+    const io = req.app.get("io");
+    if (io && latestMessage) {
+      io.to(chatId).emit("receiveMessage", {
+        ...latestMessage.toObject(),
+        chatId,
+      });
+    }
+
+    res.json(updatedChat);
   } else {
     res.status(404);
     throw new Error("Chat not found...");

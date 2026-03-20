@@ -3,6 +3,7 @@ import { Card, Button, Form } from "react-bootstrap";
 import axios from "axios";
 import Loader from "../Loader";
 import Message from "../Message";
+import { getUserInfo } from "../../utils/userSession";
 
 function PostList({ posts, fetchPosts, startChatHandler }) {
   const [loading, setLoading] = useState(false);
@@ -10,13 +11,13 @@ function PostList({ posts, fetchPosts, startChatHandler }) {
   const [message, setMessage] = useState("");
   const handleClose = () => setMessage("");
   const [commentContent, setCommentContent] = useState({});
-  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  const userInfo = getUserInfo();
   const currentUserId = userInfo?._id;
 
   const submitCommentHandler = async (postId) => {
     try {
       setLoading(true);
-      const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+      const userInfo = getUserInfo();
       const config = {
         headers: {
           "Content-Type": "application/json",
@@ -45,7 +46,7 @@ function PostList({ posts, fetchPosts, startChatHandler }) {
     if (window.confirm("Are you sure you want to delete this post?")) {
       try {
         setLoading(true);
-        const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+        const userInfo = getUserInfo();
         const config = {
           headers: {
             "Content-Type": "application/json",

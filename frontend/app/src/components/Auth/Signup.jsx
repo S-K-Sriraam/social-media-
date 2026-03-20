@@ -4,6 +4,7 @@ import Loader from "../Loader";
 import Message from "../Message";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
+import { setUserInfo } from "../../utils/userSession";
 
 function Signup() {
   const navigate = useNavigate();
@@ -151,7 +152,7 @@ function Signup() {
         },
       };
       const { data } = await axios.post("/api/auth/signup", formValues, config);
-      localStorage.setItem("userInfo", JSON.stringify(data));
+      setUserInfo(data);
       clearForm();
       navigate(redirect);
     } catch (error) {

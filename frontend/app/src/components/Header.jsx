@@ -1,25 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
 import "./Header.css";
+import { getUserInfo, clearUserInfo } from "../utils/userSession";
 
 function Header() {
   const [user, setUser] = useState(null);
   const [theme, setTheme] = useState("light");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const dropdownRef = useRef(null);
 
   const syncUserFromStorage = () => {
-    const userInfo = localStorage.getItem("userInfo");
+    const userInfo = getUserInfo();
     if (!userInfo) {
       setUser(null);
       return;
     }
-
-    try {
-      setUser(JSON.parse(userInfo));
-    } catch {
-      setUser(null);
-    }
+    setUser(userInfo);
   };
 
   useEffect(() => {
@@ -57,9 +55,28 @@ function Header() {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, []);
+
+  useEffect(() => {
+    setIsDropdownOpen(false);
+  }, [location.pathname]);
+
   const logoutHandler = () => {
-    localStorage.removeItem("userInfo");
+    clearUserInfo();
     setUser(null);
+    setIsDropdownOpen(false);
     navigate("/login", { replace: true });
   };
 
@@ -107,23 +124,31 @@ function Header() {
                   Chat 
                 </NavLink>
               </li>
-              <li className="nav-item dropdown">
+              <li className="nav-item dropdown" ref={dropdownRef}>
                 <button
                   className="nav-link dropdown-toggle btn btn-link"
-                  data-bs-toggle="dropdown"
                   type="button"
                   aria-haspopup="true"
-                  aria-expanded="false"
+                  aria-expanded={isDropdownOpen}
+                  onClick={() => setIsDropdownOpen((prev) => !prev)}
                 >
                   {user ? `Welcome ${user.username}` : "signin"}
                 </button>
-                <div className="dropdown-menu">
+                <div className={`dropdown-menu ${isDropdownOpen ? "show" : ""}`}>
                   {!user ? (
                     <>
-                      <Link className="dropdown-item" to="/signup">
+                      <Link
+                        className="dropdown-item"
+                        to="/signup"
+                        onClick={() => setIsDropdownOpen(false)}
+                      >
                         Sign-Up
                       </Link>
-                      <Link className="dropdown-item" to="/login">
+                      <Link
+                        className="dropdown-item"
+                        to="/login"
+                        onClick={() => setIsDropdownOpen(false)}
+                      >
                         Login
                       </Link>
                     </>
@@ -138,7 +163,11 @@ function Header() {
                       </button>
 
                       <div className="dropdown-divider"></div>
-                      <Link className="dropdown-item" to="/profile">
+                      <Link
+                        className="dropdown-item"
+                        to="/profile"
+                        onClick={() => setIsDropdownOpen(false)}
+                      >
                         Profile
                       </Link>
                     </>

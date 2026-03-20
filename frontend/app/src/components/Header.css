@@ -1,4 +1,7 @@
 .custom-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1100;
   transition:
     background-color 0.35s ease,
     color 0.35s ease,
@@ -97,6 +100,9 @@
 }
 
 .navbar .dropdown-menu {
+  position: absolute;
+  z-index: 1200;
+  min-width: 12rem;
   transform-origin: top;
   animation: dropdownReveal 0.24s ease both;
 }

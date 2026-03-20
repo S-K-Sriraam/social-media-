@@ -3,6 +3,10 @@ import { Alert } from 'react-bootstrap';
 
 function Message ({ variant, children, onClose }) {
     useEffect (() => {
+        if (typeof onClose !== "function") {
+            return;
+        }
+
         const timer = setTimeout(() => {
             onClose();
         }, 15000);
@@ -11,7 +15,11 @@ function Message ({ variant, children, onClose }) {
     }, [onClose]);
 
     return (
-        <Alert variant={variant} dismissible onClose={onClose}>
+        <Alert
+            variant={variant}
+            dismissible={typeof onClose === "function"}
+            onClose={onClose}
+        >
             {children}
         </Alert>
     );
