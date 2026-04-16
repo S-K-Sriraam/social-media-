@@ -4,6 +4,9 @@ import './bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { configureApiClient } from './utils/apiConfig';
+
+configureApiClient();
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

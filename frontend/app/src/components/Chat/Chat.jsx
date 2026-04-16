@@ -6,7 +6,7 @@ import axios from "axios";
 import Loader from "../Loader";
 import Message from "../Message";
 import { getUserInfo } from "../../utils/userSession";
-const ENDPOINT = "http://localhost:5000";
+import { SOCKET_URL } from "../../utils/apiConfig";
 let socket;
 
 function Chat() {
@@ -23,7 +23,7 @@ function Chat() {
       return;
     }
 
-    socket = io(ENDPOINT);
+    socket = io(SOCKET_URL);
     socket.emit("joinChat", chatId);
 
     socket.on("connect", () => {
