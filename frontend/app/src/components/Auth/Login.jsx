@@ -5,6 +5,7 @@ import axios from "axios";
 import Loader from "../Loader";
 import Message from "../Message";
 import { getUserInfo, setUserInfo } from "../../utils/userSession";
+import { assertApiIsConfigured } from "../../utils/apiConfig";
 
 function Login() {
   const navigate = useNavigate();
@@ -105,6 +106,7 @@ function Login() {
       setLoading(true);
       setMessage("")
       setError("")
+      assertApiIsConfigured();
 
       const config = {
         headers: {

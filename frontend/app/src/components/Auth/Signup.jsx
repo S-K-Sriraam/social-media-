@@ -5,6 +5,7 @@ import Message from "../Message";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { setUserInfo } from "../../utils/userSession";
+import { assertApiIsConfigured } from "../../utils/apiConfig";
 
 function Signup() {
   const navigate = useNavigate();
@@ -145,6 +146,7 @@ function Signup() {
       setLoading(true);
       setMessage("");
       setError(null);
+      assertApiIsConfigured();
 
       const config = {
         headers: {
